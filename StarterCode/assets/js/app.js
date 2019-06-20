@@ -35,23 +35,23 @@ var chartGroup = svg.append("g")
     console.log(censusData)
     
     var xLinearScale = d3.scaleLinear()
-        .domain([d3.min(censusData, d=>d["poverty"]-1),
-        d3.max(censusData,d=>d["poverty"])])
+        .domain([d3.min(censusData, d=>d["age"]-1),
+        d3.max(censusData,d=>d["age"]+1)])
         .range([0,width]);
 
     console.log("x-axis data");
-    console.log(d3.min(censusData, d=>d["poverty"]));
-    console.log(d3.max(censusData, d=>d["poverty"]));
+    console.log(d3.min(censusData, d=>d["age"]));
+    console.log(d3.max(censusData, d=>d["age"]));
     console.log("y-axis data");
-    console.log(d3.min(censusData, d=>d["healthcare"]));
-    console.log(d3.max(censusData, d=>d["healthcare"]));
+    console.log(d3.min(censusData, d=>d["smokes"]));
+    console.log(d3.max(censusData, d=>d["smokes"]+1));
     
     console.log(d3.max(censusData, d=>d["obesity"]));
     console.log(d3.min(censusData, d=>d["obesity"]));
 
     var yLinearScale = d3.scaleLinear()
-        .domain([d3.min(censusData, d=>d["healthcare"]-1),
-            d3.max(censusData, d=>d["healthcare"])])
+        .domain([d3.min(censusData, d=>d["smokes"]-1),
+            d3.max(censusData, d=>d["smokes"]+3)])
         .range([height,0]);
 
     var bottomAxis = d3.axisBottom(xLinearScale);
@@ -66,26 +66,26 @@ var chartGroup = svg.append("g")
     chartGroup.append("g")
     .call(leftAxis);
 
-    var circlesGroup =  chartGroup.selectAll("g.dot")
+    var circlesGroup =  chartGroup.selectAll("circle")
         .data(censusData)
         .enter()
         .append('g');
 
     circlesGroup.append("circle")
-        .attr("cx", d => xLinearScale(d["poverty"]))
-        .attr("cy", d => yLinearScale(d["healthcare"]))
+        .attr("cx", d => xLinearScale(d["age"]))
+        .attr("cy", d => yLinearScale(d["smokes"]))
         .attr("r", d=>d.obesity / 2)
         .attr("fill", "steelblue")
         .attr("opacity", ".5");
 
     circlesGroup.append("text").text(d=>d.abbr)
-        .attr("x", d => xLinearScale(d.poverty)-4)
-        .attr("y", d => yLinearScale(d.healthcare)+2)
+        .attr("x", d => xLinearScale(d.age)-4)
+        .attr("y", d => yLinearScale(d.smokes)+2)
         .style("font-size",".6em")
         .classed("fill-text", true);
 
-    console.log(d => xLinearScale(d.poverty));
-    console.log(d => yLinearScale(d.healthcare));
+    console.log(d => xLinearScale(d.age));
+    console.log(d => yLinearScale(d.smokes));
     // Create group for  2 x- axis labels
   var labelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${width / 2}, ${height + 20})`);
@@ -95,7 +95,7 @@ var chartGroup = svg.append("g")
     .attr("y", 20)
     .attr("value", "poverty") // value to grab for event listener
     .classed("active", true)
-    .text("Poverty Vs. Healthcare");
+    .text("Smokers Vs. Age");
 
     chartGroup.append("text")
     .attr("transform", "rotate(-90)")
@@ -103,17 +103,17 @@ var chartGroup = svg.append("g")
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .classed("axis-text", true)
-    .text("Healthcare");
+    .text("Smokers");
 
     var toolTip = d3.tip()
     .attr("class", "tooltip")
     .offset([80, -60])
     .html(function(d) {
             var state = +d.state;
-            var poverty = +d.poverty;
-            var healthcare = +d.healthcare;
+            var smokes = +d.smokes;
+            var healthcare = +d.age;
 
-      return (`${d.state}<br>${"Poverty:"} ${d.poverty} <br> ${"Healthcare:"} ${d.healthcare}`);
+      return (`${d.state}<br>${"Smokers:"} ${d.smokes} <br> ${"Age:"} ${d.age}`);
     });
 
   circlesGroup.call(toolTip);
